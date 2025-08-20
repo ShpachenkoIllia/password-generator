@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Password Generator — Neon</title>
+  <meta name="description" content="Free password generator with customizable length and character types. Create strong and secure passwords instantly online.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <style>
+    :root{
+      --bg-1:#0b1624;
+      --bg-2:#0e2134;
+      --panel:#0f1d2c;
+      --text:#e8f3ff;
+      --muted:#8ea6c6;
+      --danger:#ff6b6b;
+    }
+    /* Единый, адаптивный фон без нижних полос */
+    html,body{height:100%;}
+    body{
+      margin:0; color:var(--text);
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans";
+      background: radial-gradient(1100px 650px at 68% -10%, #15314e 0%, transparent 60%),
+                  radial-gradient(850px 520px at 18% 110%, #142a44 0%, transparent 60%),
+                  linear-gradient(160deg,var(--bg-1),var(--bg-2));
+      background-size: cover;        /* тянется под окно */
+      background-attachment: fixed;  /* не «едет» при прокрутке */
+    }
+    .wrap{min-height:100%;display:flex;justify-content:center;align-items:flex-start;padding:56px 16px}
+    .card{width:min(600px,90vw);background:rgba(15,29,44,.92);border:1px solid rgba(255,255,255,.06);border-radius:22px;padding:24px;box-shadow:0 12px 70px rgba(18, 50, 82,.35),0 0 60px rgba(24, 247, 186,.08), inset 0 0 0 1px rgba(255,255,255,.03)}
+    h1{margin:6px 0 22px;text-align:center;font-weight:800;letter-spacing:.3px;font-size:32px;color:#eafeff;text-shadow:0 0 16px rgba(37,210,255,.55),0 0 32px rgba(25,255,169,.25)}
+
+    .section{background:rgba(9,18,28,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px;margin-top:16px;box-shadow:inset 0 0 16px rgba(0,0,0,.25)}
+    .label{display:block;color:var(--muted);font-size:14px;margin-bottom:10px}
+
+    /* Чипы наборов */
+    .chips{display:flex;gap:12px;flex-wrap:wrap}
+    .chip input{display:none}
+    .chip label{cursor:pointer;user-select:none;display:inline-flex;align-items:center;padding:10px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.09);background:#0d1a2a;transition:transform .12s ease, box-shadow .15s ease}
+    .chip input:checked+label{background:linear-gradient(180deg, rgba(15,185,227,.35), rgba(29,240,177,.25));border-color:rgba(37,210,255,.6);box-shadow:0 0 24px rgba(37,210,255,.45) inset, 0 0 18px rgba(37,210,255,.35)}
+    .chip label:hover{box-shadow:0 0 18px rgba(37,210,255,.25); transform: translateY(-1px)}
+    .chip label:active{transform:translateY(0)}
+
+    /* Слайдер и число */
+    .row{display:flex;align-items:center;gap:16px}
+    .slider{flex:1}
+    input[type=range]{width:100%;-webkit-appearance:none;background:transparent;cursor:pointer}
+    input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:999px;background:linear-gradient(90deg, rgba(37,210,255,.32), rgba(25,255,169,.32));box-shadow:inset 0 0 10px rgba(0,0,0,.35)}
+    input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-6px;border-radius:50%;background:#eaffff;border:2px solid #86f1ff;box-shadow:0 0 14px rgba(37,210,255,.9),0 0 28px rgba(25,255,169,.45); cursor:pointer;}
+    .num{width:56px;text-align:center;padding:8px 0;border-radius:10px;background:#0a1827;border:1px solid rgba(255,255,255,.08);color:var(--text);font-weight:700}
+    .num::-webkit-outer-spin-button,.num::-webkit-inner-spin-button{appearance:none;margin:0}
+
+    /* Кнопки */
+    .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    button{cursor:pointer;border-radius:12px;border:1px solid rgba(255,255,255,.08);padding:12px 18px;font-weight:800;letter-spacing:.2px;color:#ecffff;background:#0c1a2a;transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
+    button:hover{transform:translateY(-1px);filter:brightness(1.05)}
+    button:active{transform:translateY(0);filter:brightness(0.98)}
+    #gen{background:linear-gradient(90deg, rgba(14,200,240,.34), rgba(29,240,177,.20)); box-shadow:0 0 28px rgba(37,210,255,.36), 0 0 10px rgba(14,200,240,.18) inset}
+    #gen:hover{box-shadow:0 0 36px rgba(37,210,255,.5), 0 0 12px rgba(14,200,240,.22) inset}
+    #copy{background:linear-gradient(90deg, rgba(25,213,141,.40), rgba(25,213,141,.18)); border-color:rgba(25,213,141,.6); box-shadow:0 0 18px rgba(25,213,141,.3)}
+    #copy:hover{box-shadow:0 0 28px rgba(25,213,141,.45)}
+    #clear{background:#2f3841;border-color:#47525c}
+
+    /* Поле вывода */
+    .out{margin-top:16px}
+    .out input{width:100%;font-size:20px;padding:14px 16px;border-radius:14px;background:#0a1929;border:1px solid rgba(255,255,255,.1);color:#eaffff;letter-spacing:.5px;box-shadow:inset 0 0 16px rgba(0,0,0,.35);box-sizing:border-box;max-width:100%}
+    .msg{margin-top:8px;font-size:14px}
+    .ok{color:#88ffd2}.err{color:var(--danger)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Password Generator</h1>
+
+      <div class="section">
+        <span class="label">Character types</span>
+        <div class="chips">
+          <div class="chip"><input id="set-l" type="checkbox" checked><label for="set-l">a–z</label></div>
+          <div class="chip"><input id="set-u" type="checkbox" checked><label for="set-u">A–Z</label></div>
+          <div class="chip"><input id="set-d" type="checkbox" checked><label for="set-d">0–9</label></div>
+          <div class="chip"><input id="set-s" type="checkbox" checked><label for="set-s">Special characters</label></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <span class="label">Length</span>
+        <div class="row">
+          <div class="slider"><input id="len" type="range" min="8" max="32" value="16"></div>
+          <input id="lenNum" class="num" type="number" min="8" max="32" value="16"/>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="btns">
+          <button id="gen">Generate</button>
+          <button id="copy">Copy</button>
+          <button id="clear">Clear</button>
+        </div>
+      </div>
+
+      <div class="section out">
+        <span class="label">Password</span>
+        <input id="out" type="text" placeholder="" readonly />
+        <div id="msg" class="msg" role="status" aria-live="polite" role="status" aria-live="polite"></div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const el = {
+    l: $('set-l'), u: $('set-u'), d: $('set-d'), s: $('set-s'),
+    len: $('len'), lenNum: $('lenNum'),
+    out: $('out'), msg: $('msg'),
+    gen: $('gen'), copy: $('copy'), clear: $('clear')
+  };
+
+  const SETS = {
+    l: 'abcdefghijklmnopqrstuvwxyz',
+    u: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    d: '0123456789',
+    s: "!@#$%^&*()-_=+[]{};:,.?\/"
+  };
+  const SIMILAR = new Set(['O','o','0','l','1','I','|','"','\'','\\','<','>','`',' ']); // исключим спорные символы
+
+  const isLetter = (c)=>/[a-zA-Z]/.test(c);
+  const isDigit = (c)=>/[0-9]/.test(c);
+  const posLetter = (c)=>c.toLowerCase().charCodeAt(0)-97;
+  const posDigit  = (c)=>c.charCodeAt(0)-48;
+
+  function isSeq3(a,b,c){
+    if(isLetter(a)&&isLetter(b)&&isLetter(c)){
+      const x=posLetter(a), y=posLetter(b), z=posLetter(c);
+      return (y===x+1 && z===y+1) || (y===x-1 && z===y-1);
+    }
+    if(isDigit(a)&&isDigit(b)&&isDigit(c)){
+      const x=posDigit(a), y=posDigit(b), z=posDigit(c);
+      return (y===x+1 && z===y+1) || (y===x-1 && z===y-1);
+    }
+    return false;
+  }
+
+  function hasImmediateRepeat(s){
+    for(let i=1;i<s.length;i++){ if(s[i]===s[i-1]) return true; }
+    return false;
+  }
+  function hasRepeatedBlocks(s){
+    const n=s.length;
+    for(let i=0;i<n-1;i++){
+      for(let L=1; i+2*L<=n; L++){
+        if(s.slice(i,i+L)===s.slice(i+L,i+2*L)) return true;
+      }
+    }
+    return false;
+  }
+  function hasAnySeq3(s){
+    for(let i=2;i<s.length;i++){
+      if(isSeq3(s[i-2],s[i-1],s[i])) return true;
+    }
+    return false;
+  }
+
+  function buildPool(){
+    let pool = '';
+    if(el.l.checked) pool+=SETS.l;
+    if(el.u.checked) pool+=SETS.u;
+    if(el.d.checked) pool+=SETS.d;
+    if(el.s.checked) pool+=SETS.s;
+    pool = [...pool].filter(ch=>!SIMILAR.has(ch)).join('');
+    return [...new Set(pool)].join('');
+  }
+  function pick(arr){
+    const n = arr.length;
+    if(n === 0) return undefined;
+    const cryptoObj = (window.crypto || window.msCrypto);
+    if (cryptoObj && cryptoObj.getRandomValues) {
+      const u32 = new Uint32Array(1);
+      cryptoObj.getRandomValues(u32);
+      return arr[u32[0] % n];
+    }
+    return arr[Math.floor(Math.random()*n)];
+  }
+  function categoryOf(c){
+    if(SETS.l.includes(c)) return 'l';
+    if(SETS.u.includes(c)) return 'u';
+    if(SETS.d.includes(c)) return 'd';
+    return 's';
+  }
+  function validate(s, needTypes){
+    if(hasImmediateRepeat(s)) return {ok:false};
+    if(hasAnySeq3(s)) return {ok:false};
+    if(hasRepeatedBlocks(s)) return {ok:false};
+    const present = new Set([...s].map(categoryOf));
+    for(const t of needTypes){ if(!present.has(t)) return {ok:false}; }
+    return {ok:true};
+  }
+
+  function showMsg(text, ok=true){
+    el.msg.textContent = text || '';
+    el.msg.className = 'msg ' + (ok? 'ok' : 'err');
+  }
+
+  function clampLen(v){
+    v = Math.max(8, Math.min(32, Number(v)||8));
+    el.len.value=v; el.lenNum.value=v; return v;
+  }
+
+  function generate(){
+    const len = clampLen(el.lenNum.value || el.len.value);
+    const pool = buildPool();
+    const needTypes = ['l','u','d','s'].filter(t=> (t==='l'?el.l.checked : t==='u'?el.u.checked : t==='d'?el.d.checked : el.s.checked));
+    if(pool.length===0){ showMsg("Choose at least one type", false); return; }
+
+    const poolArr = [...pool];
+    const fromSet = (setStr)=>[...setStr].filter(ch=>pool.includes(ch));
+
+    const MAX_ATTEMPTS = 20000;
+    for(let attempt=0; attempt<MAX_ATTEMPTS; attempt++){
+      let s = '';
+      // начальные символы — по одному из каждого выбранного типа
+      for(const t of needTypes){
+        const setChars = t==='l'?SETS.l: t==='u'?SETS.u: t==='d'?SETS.d: SETS.s;
+        const options = fromSet(setChars).filter(ch=>{
+          if(s.length>0 && ch===s[s.length-1]) return false;
+          if(s.length>=2 && isSeq3(s[s.length-2], s[s.length-1], ch)) return false;
+          return true;
+        });
+        if(options.length===0){ s=''; break; }
+        s += pick(options);
+      }
+      if(s.length===0) continue;
+
+      while(s.length < len){
+        const options = poolArr.filter(ch=>{
+          if(s.length>0 && ch===s[s.length-1]) return false;
+          if(s.length>=2 && isSeq3(s[s.length-2], s[s.length-1], ch)) return false;
+          return true;
+        });
+        if(options.length===0){ s=''; break; }
+        s += pick(options);
+      }
+      if(s.length!==len) continue;
+
+      const v = validate(s, needTypes);
+      if(v.ok){ el.out.value = s; showMsg("Password generated", true); return; }
+    }
+    showMsg("Unable to generate password. Adjust settings and try again", false);
+  }
+
+  // Синхронизация длины
+  el.len.addEventListener('input',()=>{ el.lenNum.value = el.len.value; });
+  el.lenNum.addEventListener('input',()=>{ /* во время ввода не применяем */ });
+  el.lenNum.addEventListener('blur',()=>{ clampLen(el.lenNum.value); });
+  el.lenNum.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ clampLen(el.lenNum.value); el.lenNum.blur(); } });
+
+  // Кнопки
+  el.gen.addEventListener('click', generate);
+  el.copy.addEventListener('click', async ()=>{
+    if(!el.out.value){ showMsg("No data to copy", false); return; }
+    try{
+      await navigator.clipboard.writeText(el.out.value);
+      showMsg("Password copied", true);
+    }catch(e){
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = el.out.value;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if(ok){ showMsg("Password copied", true); }
+        else { throw new Error('execCommand failed'); }
+      }catch(e2){ showMsg("Copy failed", false); }
+    }
+  });
+  el.clear.addEventListener('click', ()=>{ el.out.value=''; showMsg("", true); });
+})();
+</script>
+</body>
+</html>
