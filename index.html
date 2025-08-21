@@ -16,32 +16,31 @@
       --danger:#ff6b6b;
     }
 
-    /* фикс скролла справа */
-    html,body{
-      height:100%;
-      margin:0;
-      overflow-x:hidden;
+    /* Исправлено: убрал скролл */
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden; /* запрещаем прокрутку */
     }
 
     body{
       color:var(--text);
       font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans";
-      background:
-        radial-gradient(1100px 650px at 68% -10%, #15314e 0%, transparent 60%),
-        radial-gradient(850px 520px at 18% 110%, #142a44 0%, transparent 60%),
-        linear-gradient(160deg,var(--bg-1),var(--bg-2));
-      background-size:cover;
-      background-attachment:fixed;
+      background: radial-gradient(1100px 650px at 68% -10%, #15314e 0%, transparent 60%),
+                  radial-gradient(850px 520px at 18% 110%, #142a44 0%, transparent 60%),
+                  linear-gradient(160deg,var(--bg-1),var(--bg-2));
+      background-size: cover;
+      background-attachment: fixed;
     }
 
     .wrap{min-height:100%;display:flex;justify-content:center;align-items:flex-start;padding:56px 16px}
-    .card{width:min(600px,90vw);background:rgba(15,29,44,.92);border:1px solid rgba(255,255,255,.06);border-radius:22px;padding:24px;box-shadow:0 12px 70px rgba(18,50,82,.35),0 0 60px rgba(24,247,186,.08), inset 0 0 0 1px rgba(255,255,255,.03)}
+    .card{width:min(600px,90vw);background:rgba(15,29,44,.92);border:1px solid rgba(255,255,255,.06);border-radius:22px;padding:24px;box-shadow:0 12px 70px rgba(18, 50, 82,.35),0 0 60px rgba(24, 247, 186,.08), inset 0 0 0 1px rgba(255,255,255,.03)}
     h1{margin:6px 0 22px;text-align:center;font-weight:800;letter-spacing:.3px;font-size:32px;color:#eafeff;text-shadow:0 0 16px rgba(37,210,255,.55),0 0 32px rgba(25,255,169,.25)}
 
     .section{background:rgba(9,18,28,.6);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px;margin-top:16px;box-shadow:inset 0 0 16px rgba(0,0,0,.25)}
     .label{display:block;color:var(--muted);font-size:14px;margin-bottom:10px}
 
-    /* chips */
+    /* Чипы наборов */
     .chips{display:flex;gap:12px;flex-wrap:wrap}
     .chip input{display:none}
     .chip label{cursor:pointer;user-select:none;display:inline-flex;align-items:center;padding:10px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.09);background:#0d1a2a;transition:transform .12s ease, box-shadow .15s ease}
@@ -49,7 +48,7 @@
     .chip label:hover{box-shadow:0 0 18px rgba(37,210,255,.25); transform: translateY(-1px)}
     .chip label:active{transform:translateY(0)}
 
-    /* slider + number */
+    /* Слайдер и число */
     .row{display:flex;align-items:center;gap:16px}
     .slider{flex:1}
     input[type=range]{width:100%;-webkit-appearance:none;background:transparent;cursor:pointer}
@@ -58,7 +57,7 @@
     .num{width:56px;text-align:center;padding:8px 0;border-radius:10px;background:#0a1827;border:1px solid rgba(255,255,255,.08);color:var(--text);font-weight:700}
     .num::-webkit-outer-spin-button,.num::-webkit-inner-spin-button{appearance:none;margin:0}
 
-    /* buttons */
+    /* Кнопки */
     .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
     button{cursor:pointer;border-radius:12px;border:1px solid rgba(255,255,255,.08);padding:12px 18px;font-weight:800;letter-spacing:.2px;color:#ecffff;background:#0c1a2a;transition:transform .15s ease, box-shadow .15s ease, filter .15s ease}
     button:hover{transform:translateY(-1px);filter:brightness(1.05)}
@@ -69,7 +68,7 @@
     #copy:hover{box-shadow:0 0 28px rgba(25,213,141,.45)}
     #clear{background:#2f3841;border-color:#47525c}
 
-    /* output */
+    /* Поле вывода */
     .out{margin-top:16px}
     .out input{width:100%;font-size:20px;padding:14px 16px;border-radius:14px;background:#0a1929;border:1px solid rgba(255,255,255,.1);color:#eaffff;letter-spacing:.5px;box-shadow:inset 0 0 16px rgba(0,0,0,.35);box-sizing:border-box;max-width:100%}
     .msg{margin-top:8px;font-size:14px}
@@ -121,181 +120,178 @@
         <input id="out" type="text" placeholder="" readonly />
         <div id="msg" class="msg" role="status" aria-live="polite"></div>
       </div>
+
     </div>
   </div>
 
-  <script>
-  (function(){
-    const $ = (id)=>document.getElementById(id);
-    const el = {
-      l: $('set-l'), u: $('set-u'), d: $('set-d'), s: $('set-s'),
-      len: $('len'), lenNum: $('lenNum'),
-      out: $('out'), msg: $('msg'),
-      gen: $('gen'), copy: $('copy'), clear: $('clear')
-    };
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const el = {
+    l: $('set-l'), u: $('set-u'), d: $('set-d'), s: $('set-s'),
+    len: $('len'), lenNum: $('lenNum'),
+    out: $('out'), msg: $('msg'),
+    gen: $('gen'), copy: $('copy'), clear: $('clear')
+  };
 
-    const SETS = {
-      l: 'abcdefghijklmnopqrstuvwxyz',
-      u: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-      d: '0123456789',
-      s: "!@#$%^&*()-_=+[]{};:,.?/\\"
-    };
-    const SIMILAR = new Set(['O','o','0','l','1','I','|','"',"'",'\\','<','>','`',' ']);
+  const SETS = {
+    l: 'abcdefghijklmnopqrstuvwxyz',
+    u: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    d: '0123456789',
+    s: "!@#$%^&*()-_=+[]{};:,.?/"
+  };
+  const SIMILAR = new Set(['O','o','0','l','1','I','|','"','\'','\\','<','>','`',' ']); 
 
-    const isLetter = (c)=>/[a-zA-Z]/.test(c);
-    const isDigit = (c)=>/[0-9]/.test(c);
-    const posLetter = (c)=>c.toLowerCase().charCodeAt(0)-97;
-    const posDigit  = (c)=>c.charCodeAt(0)-48;
+  const isLetter = (c)=>/[a-zA-Z]/.test(c);
+  const isDigit = (c)=>/[0-9]/.test(c);
+  const posLetter = (c)=>c.toLowerCase().charCodeAt(0)-97;
+  const posDigit  = (c)=>c.charCodeAt(0)-48;
 
-    function isSeq3(a,b,c){
-      if(isLetter(a)&&isLetter(b)&&isLetter(c)){
-        const x=posLetter(a), y=posLetter(b), z=posLetter(c);
-        return (y===x+1 && z===y+1) || (y===x-1 && z===y-1);
+  function isSeq3(a,b,c){
+    if(isLetter(a)&&isLetter(b)&&isLetter(c)){
+      const x=posLetter(a), y=posLetter(b), z=posLetter(c);
+      return (y===x+1 && z===y+1) || (y===x-1 && z===y-1);
+    }
+    if(isDigit(a)&&isDigit(b)&&isDigit(c)){
+      const x=posDigit(a), y=posDigit(b), z=posDigit(c);
+      return (y===x+1 && z===y+1) || (y===x-1 && z===y-1);
+    }
+    return false;
+  }
+
+  function hasImmediateRepeat(s){
+    for(let i=1;i<s.length;i++){ if(s[i]===s[i-1]) return true; }
+    return false;
+  }
+  function hasRepeatedBlocks(s){
+    const n=s.length;
+    for(let i=0;i<n-1;i++){
+      for(let L=1; i+2*L<=n; L++){
+        if(s.slice(i,i+L)===s.slice(i+L,i+2*L)) return true;
       }
-      if(isDigit(a)&&isDigit(b)&&isDigit(c)){
-        const x=posDigit(a), y=posDigit(b), z=posDigit(c);
-        return (y===x+1 && z===y+1) || (y===x-1 && z===y-1);
+    }
+    return false;
+  }
+  function hasAnySeq3(s){
+    for(let i=2;i<s.length;i++){
+      if(isSeq3(s[i-2],s[i-1],s[i])) return true;
+    }
+    return false;
+  }
+
+  function buildPool(){
+    let pool = '';
+    if(el.l.checked) pool+=SETS.l;
+    if(el.u.checked) pool+=SETS.u;
+    if(el.d.checked) pool+=SETS.d;
+    if(el.s.checked) pool+=SETS.s;
+    pool = [...pool].filter(ch=>!SIMILAR.has(ch)).join('');
+    return [...new Set(pool)].join('');
+  }
+  function pick(arr){
+    const n = arr.length;
+    if(n === 0) return undefined;
+    const cryptoObj = (window.crypto || window.msCrypto);
+    if (cryptoObj && cryptoObj.getRandomValues) {
+      const u32 = new Uint32Array(1);
+      cryptoObj.getRandomValues(u32);
+      return arr[u32[0] % n];
+    }
+    return arr[Math.floor(Math.random()*n)];
+  }
+  function categoryOf(c){
+    if(SETS.l.includes(c)) return 'l';
+    if(SETS.u.includes(c)) return 'u';
+    if(SETS.d.includes(c)) return 'd';
+    return 's';
+  }
+  function validate(s, needTypes){
+    if(hasImmediateRepeat(s)) return {ok:false};
+    if(hasAnySeq3(s)) return {ok:false};
+    if(hasRepeatedBlocks(s)) return {ok:false};
+    const present = new Set([...s].map(categoryOf));
+    for(const t of needTypes){ if(!present.has(t)) return {ok:false}; }
+    return {ok:true};
+  }
+
+  function showMsg(text, ok=true){
+    el.msg.textContent = text || '';
+    el.msg.className = 'msg ' + (ok? 'ok' : 'err');
+  }
+
+  function clampLen(v){
+    v = Math.max(8, Math.min(32, Number(v)||8));
+    el.len.value=v; el.lenNum.value=v; return v;
+  }
+
+  function generate(){
+    const len = clampLen(el.lenNum.value || el.len.value);
+    const pool = buildPool();
+    const needTypes = ['l','u','d','s'].filter(t=> (t==='l'?el.l.checked : t==='u'?el.u.checked : t==='d'?el.d.checked : el.s.checked));
+    if(pool.length===0){ showMsg("Choose at least one type", false); return; }
+
+    const poolArr = [...pool];
+    const fromSet = (setStr)=>[...setStr].filter(ch=>pool.includes(ch));
+
+    const MAX_ATTEMPTS = 20000;
+    for(let attempt=0; attempt<MAX_ATTEMPTS; attempt++){
+      let s = '';
+      for(const t of needTypes){
+        const setChars = t==='l'?SETS.l: t==='u'?SETS.u: t==='d'?SETS.d: SETS.s;
+        const options = fromSet(setChars).filter(ch=>{
+          if(s.length>0 && ch===s[s.length-1]) return false;
+          if(s.length>=2 && isSeq3(s[s.length-2], s[s.length-1], ch)) return false;
+          return true;
+        });
+        if(options.length===0){ s=''; break; }
+        s += pick(options);
       }
-      return false;
-    }
+      if(s.length===0) continue;
 
-    function hasImmediateRepeat(s){
-      for(let i=1;i<s.length;i++){ if(s[i]===s[i-1]) return true; }
-      return false;
-    }
-    function hasRepeatedBlocks(s){
-      const n=s.length;
-      for(let i=0;i<n-1;i++){
-        for(let L=1; i+2*L<=n; L++){
-          if(s.slice(i,i+L)===s.slice(i+L,i+2*L)) return true;
-        }
+      while(s.length < len){
+        const options = poolArr.filter(ch=>{
+          if(s.length>0 && ch===s[s.length-1]) return false;
+          if(s.length>=2 && isSeq3(s[s.length-2], s[s.length-1], ch)) return false;
+          return true;
+        });
+        if(options.length===0){ s=''; break; }
+        s += pick(options);
       }
-      return false;
+      if(s.length!==len) continue;
+
+      const v = validate(s, needTypes);
+      if(v.ok){ el.out.value = s; showMsg("Password generated", true); return; }
     }
-    function hasAnySeq3(s){
-      for(let i=2;i<s.length;i++){
-        if(isSeq3(s[i-2],s[i-1],s[i])) return true;
-      }
-      return false;
-    }
+    showMsg("Unable to generate password. Adjust settings and try again", false);
+  }
 
-    function buildPool(){
-      let pool = '';
-      if(el.l.checked) pool+=SETS.l;
-      if(el.u.checked) pool+=SETS.u;
-      if(el.d.checked) pool+=SETS.d;
-      if(el.s.checked) pool+=SETS.s;
-      pool = [...pool].filter(ch=>!SIMILAR.has(ch)).join('');
-      return [...new Set(pool)].join('');
-    }
-    function pick(arr){
-      const n = arr.length;
-      if(n === 0) return undefined;
-      const cryptoObj = (window.crypto || window.msCrypto);
-      if (cryptoObj && cryptoObj.getRandomValues) {
-        const u32 = new Uint32Array(1);
-        cryptoObj.getRandomValues(u32);
-        return arr[u32[0] % n];
-      }
-      return arr[Math.floor(Math.random()*n)];
-    }
-    function categoryOf(c){
-      if(SETS.l.includes(c)) return 'l';
-      if(SETS.u.includes(c)) return 'u';
-      if(SETS.d.includes(c)) return 'd';
-      return 's';
-    }
-    function validate(s, needTypes){
-      if(hasImmediateRepeat(s)) return {ok:false};
-      if(hasAnySeq3(s)) return {ok:false};
-      if(hasRepeatedBlocks(s)) return {ok:false};
-      const present = new Set([...s].map(categoryOf));
-      for(const t of needTypes){ if(!present.has(t)) return {ok:false}; }
-      return {ok:true};
-    }
+  el.len.addEventListener('input',()=>{ el.lenNum.value = el.len.value; });
+  el.lenNum.addEventListener('blur',()=>{ clampLen(el.lenNum.value); });
+  el.lenNum.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ clampLen(el.lenNum.value); el.lenNum.blur(); } });
 
-    function showMsg(text, ok=true){
-      el.msg.textContent = text || '';
-      el.msg.className = 'msg ' + (ok? 'ok' : 'err');
-    }
-
-    function clampLen(v){
-      v = Math.max(8, Math.min(32, Number(v)||8));
-      el.len.value=v; el.lenNum.value=v; return v;
-    }
-
-    function generate(){
-      const len = clampLen(el.lenNum.value || el.len.value);
-      const pool = buildPool();
-      const needTypes = ['l','u','d','s'].filter(t=> (t==='l'?el.l.checked : t==='u'?el.u.checked : t==='d'?el.d.checked : el.s.checked));
-      if(pool.length===0){ showMsg("Choose at least one type", false); return; }
-
-      const poolArr = [...pool];
-      const fromSet = (setStr)=>[...setStr].filter(ch=>pool.includes(ch));
-
-      const MAX_ATTEMPTS = 20000;
-      for(let attempt=0; attempt<MAX_ATTEMPTS; attempt++){
-        let s = '';
-        // по одному символу из каждого выбранного типа
-        for(const t of needTypes){
-          const setChars = t==='l'?SETS.l: t==='u'?SETS.u: t==='d'?SETS.d: SETS.s;
-          const options = fromSet(setChars).filter(ch=>{
-            if(s.length>0 && ch===s[s.length-1]) return false;
-            if(s.length>=2 && isSeq3(s[s.length-2], s[s.length-1], ch)) return false;
-            return true;
-          });
-          if(options.length===0){ s=''; break; }
-          s += pick(options);
-        }
-        if(s.length===0) continue;
-
-        while(s.length < len){
-          const options = poolArr.filter(ch=>{
-            if(s.length>0 && ch===s[s.length-1]) return false;
-            if(s.length>=2 && isSeq3(s[s.length-2], s[s.length-1], ch)) return false;
-            return true;
-          });
-          if(options.length===0){ s=''; break; }
-          s += pick(options);
-        }
-        if(s.length!==len) continue;
-
-        const v = validate(s, needTypes);
-        if(v.ok){ el.out.value = s; showMsg("Password generated", true); return; }
-      }
-      showMsg("Unable to generate password. Adjust settings and try again", false);
-    }
-
-    // sync length
-    el.len.addEventListener('input',()=>{ el.lenNum.value = el.len.value; });
-    el.lenNum.addEventListener('input',()=>{ /* во время ввода не применяем */ });
-    el.lenNum.addEventListener('blur',()=>{ clampLen(el.lenNum.value); });
-    el.lenNum.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ clampLen(el.lenNum.value); el.lenNum.blur(); } });
-
-    // buttons
-    el.gen.addEventListener('click', generate);
-    el.copy.addEventListener('click', async ()=>{
-      if(!el.out.value){ showMsg("No data to copy", false); return; }
+  el.gen.addEventListener('click', generate);
+  el.copy.addEventListener('click', async ()=>{
+    if(!el.out.value){ showMsg("No data to copy", false); return; }
+    try{
+      await navigator.clipboard.writeText(el.out.value);
+      showMsg("Password copied", true);
+    }catch(e){
       try{
-        await navigator.clipboard.writeText(el.out.value);
-        showMsg("Password copied", true);
-      }catch(e){
-        try{
-          const ta = document.createElement('textarea');
-          ta.value = el.out.value;
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.focus(); ta.select();
-          const ok = document.execCommand('copy');
-          document.body.removeChild(ta);
-          if(ok){ showMsg("Password copied", true); }
-          else { throw new Error('execCommand failed'); }
-        }catch(e2){ showMsg("Copy failed", false); }
-      }
-    });
-    el.clear.addEventListener('click', ()=>{ el.out.value=''; showMsg("", true); });
-  })();
-  </script>
+        const ta = document.createElement('textarea');
+        ta.value = el.out.value;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if(ok){ showMsg("Password copied", true); }
+        else { throw new Error('execCommand failed'); }
+      }catch(e2){ showMsg("Copy failed", false); }
+    }
+  });
+  el.clear.addEventListener('click', ()=>{ el.out.value=''; showMsg("", true); });
+})();
+</script>
 </body>
 </html>
